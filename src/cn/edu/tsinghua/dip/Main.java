@@ -31,11 +31,12 @@ public class Main {
                 // imageMulNoise[i][j] = pixels[i][j] * gaussianNoise[i][j];
                 // noiseMulNoise[i][j] = gaussianNoise[i][j] * gaussianNoise[i][j];
 
-                imageMulNoise[i][j] = pixels[i][j] * periodicNoise[i][j];
                 noiseMulNoise[i][j] = periodicNoise[i][j] * periodicNoise[i][j];
 
                 // add noise
                 pixels[i][j] += (gaussianNoise[i][j] + periodicNoise[i][j]);
+
+                imageMulNoise[i][j] = pixels[i][j] * periodicNoise[i][j];
                 if (pixels[i][j] > 255) {
                     pixels[i][j] = 255;
                 }
