@@ -105,6 +105,8 @@ public class Main {
                 if (a > 0 && b > 0 && a < pixels.length && b < pixels[0].length) {
                     sum += pixels[a][b];
                     count++;
+                } else {
+                    count++;
                 }
             }
         }

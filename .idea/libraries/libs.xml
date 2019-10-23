@@ -5,7 +5,6 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Android.Image/src" />
       <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Core/src" />
       <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Evolutionary/src" />
       <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Fuzzy/src" />
