@@ -7,9 +7,9 @@ import Catalano.Math.ComplexNumber;
 
 import javax.swing.*;
 
-public class OptimumNotchFilter {
+public class OptimumNotchFilter2 {
 
-    public static final String IMG_CATALANO = "img/catalano/";
+    public static final String IMG_CATALANO_FOUDER = "img/catalano/2/";
 
     public static void main(String[] args) throws Exception {
         FastBitmap image = new FastBitmap("img/original.png");
@@ -19,71 +19,32 @@ public class OptimumNotchFilter {
         FourierTransform ft = new FourierTransform(image);
         ft.Forward();
         // showImage(ft.toFastBitmap());
-        ft.toFastBitmap().saveAsPNG(IMG_CATALANO + "image_original_fourier.png");
+        ft.toFastBitmap().saveAsPNG(IMG_CATALANO_FOUDER + "image_original_fourier.png");
 
         // 1. add periodic noise and gaussian noise
         GaussianNoise gaussianNoise = new GaussianNoise(20);
         gaussianNoise.applyInPlace(image);
-        image.saveAsPNG(IMG_CATALANO + "image_gaussian_noise.png");
+        image.saveAsPNG(IMG_CATALANO_FOUDER + "image_gaussian_noise.png");
         PeriodicNoise periodicNoise = new PeriodicNoise();
         periodicNoise.applyInPlace(image);
-        image.saveAsPNG(IMG_CATALANO + "image_periodic_noise.png");
+        image.saveAsPNG(IMG_CATALANO_FOUDER + "image_periodic_noise.png");
 
         // 2. fourier transform
         ft = new FourierTransform(image);
         ft.Forward();
         // showImage(ft.toFastBitmap());
-        ft.toFastBitmap().saveAsPNG(IMG_CATALANO + "image_noise_fourier.png");
-
-        // 3. mark the point
-        // BufferedImage subimage = ft.toFastBitmap().toBufferedImage().getSubimage(186, 148, 200, 200);
-        // new FastBitmap(subimage).saveAsPNG("img/catalano/image_mark_point.png");
-        int noisePointCount = 6;
-        FourierTransform[] noiseFTs = new FourierTransform[noisePointCount];
-        int[][] points = new int[][]{
-                {0, 5, 170, 55},
-                {0, 10, 228, 150},
-                {0, 20, 287, 248},
-                {0, 20, 403, 441},
-                {0, 10, 462, 537},
-                {0, 5, 518, 634}
-        };
-        for (int i = 0; i < noisePointCount; i++) {
-            FourierTransform noiseFT = new FourierTransform(image);
-            noiseFT.Forward();
-            noiseFT.setData(deepCopy(ft.getData()));
-            CenteredFrequencyFilter frequencyFilter = new CenteredFrequencyFilter(points[i][0], points[i][1], points[i][2], points[i][3]);
-            frequencyFilter.ApplyInPlace(noiseFT);
-            noiseFTs[i] = noiseFT;
-        }
-        FourierTransform noiseFT = new FourierTransform(image);
-        noiseFT.Forward();
-        ComplexNumber[][] data = noiseFT.getData();
-        for (int i = 0; i < data.length; i++) {
-            ComplexNumber[] row = data[i];
-            for (int j = 0; j < row.length; j++) {
-                data[i][j].imaginary = 0;
-                data[i][j].real = 0;
-                for (int k = 0; k < noisePointCount; k++) {
-                    ComplexNumber tmp = noiseFTs[k].getData()[i][j];
-                    // if (i == 229 && j == 152) {
-                    //     System.out.println(tmp);
-                    // }
-                    if (tmp.real > 0 || tmp.imaginary > 0 || tmp.real < 0 || tmp.imaginary < 0) {
-                        data[i][j].imaginary = tmp.imaginary;
-                        data[i][j].real = tmp.real;
-                    }
-                }
-            }
-        }
+        ft.toFastBitmap().saveAsPNG(IMG_CATALANO_FOUDER + "image_noise_fourier.png");
 
         // 4. get the noise image
-        noiseFT.toFastBitmap().saveAsPNG(IMG_CATALANO + "image_noise_filtered1.png");
+        FastBitmap noiseMap = periodicNoise.getNoiseMap(image);
+        FourierTransform noiseFT = new FourierTransform(noiseMap);
+        noiseFT.Forward();
+        noiseFT.toFastBitmap().saveAsPNG(IMG_CATALANO_FOUDER + "image_noise_filtered1.png");
         noiseFT.Backward();
-        noiseFT.toFastBitmap().saveAsPNG(IMG_CATALANO + "image_noise_filtered2.png");
+        noiseFT.toFastBitmap().saveAsPNG(IMG_CATALANO_FOUDER + "image_noise_filtered2.png");
 
         // 5. image - w * noise
-        FastBitmap noiseMap = noiseFT.toFastBitmap();
+        noiseMap = noiseFT.toFastBitmap();
 
         FastBitmap imageMulNoise = new FastBitmap(image.getWidth(), image.getHeight(), FastBitmap.ColorSpace.Grayscale);
         FastBitmap noiseMulNoise = new FastBitmap(image.getWidth(), image.getHeight(), FastBitmap.ColorSpace.Grayscale);
@@ -114,8 +75,8 @@ public class OptimumNotchFilter {
             }
         }
 
-        finalImage.saveAsPNG(IMG_CATALANO + "image_final.png");
-        finalImageWithW.saveAsPNG(IMG_CATALANO + "image_final_w.png");
+        finalImage.saveAsPNG(IMG_CATALANO_FOUDER + "image_final.png");
+        finalImageWithW.saveAsPNG(IMG_CATALANO_FOUDER + "image_final_w.png");
         // showImage(ft.toFastBitmap());
 
     }

@@ -29,4 +29,23 @@ public class PeriodicNoise implements IApplyInPlace {
             throw new IllegalArgumentException("Periodic noise only works in grayscale images.");
         }
     }
+
+    public FastBitmap getNoiseMap(FastBitmap fastBitmap) {
+        FastBitmap result = new FastBitmap(fastBitmap.getWidth(), fastBitmap.getHeight(), FastBitmap.ColorSpace.Grayscale);
+        if (fastBitmap.isGrayscale()) {
+            int size = fastBitmap.getSize();
+            for (int i = 0; i < size; i++) {
+                int g = (int) (100 * Math.sin(100 * i));
+
+                // g = Math.min(g, 255);
+                // g = Math.max(g, 0);
+
+                result.setGray(i, g);
+            }
+
+        } else {
+            throw new IllegalArgumentException("Periodic noise only works in grayscale images.");
+        }
+        return result;
+    }
 }
