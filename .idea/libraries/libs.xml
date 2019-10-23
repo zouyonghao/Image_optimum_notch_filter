@@ -1,0 +1,25 @@
+<component name="libraryTable">
+  <library name="libs">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/libs" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Android.Image/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Core/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Evolutionary/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Fuzzy/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Graph/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.IO/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Image/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.MachineLearning/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Math/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Neuro/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Signal/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Statistics/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Video/src" />
+      <root url="jar://$USER_HOME$/Downloads/Catalano-Framework-master.zip!/Catalano-Framework-master/Catalano.Vision/src" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/libs" recursive="false" />
+  </library>
+</component>
