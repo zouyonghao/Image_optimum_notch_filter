@@ -37,8 +37,8 @@ public class PeriodicNoise implements IApplyInPlace {
             for (int i = 0; i < size; i++) {
                 int g = (int) (100 * Math.sin(100 * i));
 
-                // g = Math.min(g, 255);
-                // g = Math.max(g, 0);
+                g = Math.min(g, 255);
+                g = Math.max(g, 0);
 
                 result.setGray(i, g);
             }

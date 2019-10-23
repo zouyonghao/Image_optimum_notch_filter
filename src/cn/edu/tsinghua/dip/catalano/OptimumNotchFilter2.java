@@ -51,18 +51,15 @@ public class OptimumNotchFilter2 {
         for (int i = 0; i < image.getWidth(); i++) {
             for (int j = 0; j < image.getHeight(); j++) {
                 int tmp = image.getGray(i, j) * noiseMap.getGray(i, j);
-                tmp = Math.min(tmp, 255);
                 imageMulNoise.setGray(i, j, tmp);
                 tmp = noiseMap.getGray(i, j) * noiseMap.getGray(i, j);
-                tmp = Math.min(tmp, 255);
                 noiseMulNoise.setGray(i, j, tmp);
-
             }
         }
 
         FastBitmap finalImage = new FastBitmap(image.getWidth(), image.getHeight(), FastBitmap.ColorSpace.Grayscale);
         FastBitmap finalImageWithW = new FastBitmap(image.getWidth(), image.getHeight(), FastBitmap.ColorSpace.Grayscale);
-        int filterSize = 17;
+        int filterSize = 31;
         for (int i = 0; i < image.getWidth(); i++) {
             for (int j = 0; j < image.getHeight(); j++) {
                 double w = (getLocalMean(imageMulNoise, i, j, filterSize)
@@ -71,7 +68,9 @@ public class OptimumNotchFilter2 {
                         - getLocalMean(noiseMap, i, j, filterSize) * getLocalMean(noiseMap, i, j, filterSize));
 
                 finalImage.setGray(i, j, (int) (image.getGray(i, j) - noiseMap.getGray(i, j)));
-                finalImageWithW.setGray(i, j, (int) (image.getGray(i, j) - w * noiseMap.getGray(i, j)));
+                int tmp = Math.min(255,  (int) (image.getGray(i, j) - w * noiseMap.getGray(i, j)));
+                tmp = Math.max(0, tmp);
+                finalImageWithW.setGray(i, j, tmp);
             }
         }
 

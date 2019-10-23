@@ -1,5 +1,7 @@
 package cn.edu.tsinghua.dip;
 
+import Catalano.Math.Matrix;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -13,7 +15,7 @@ public class Main {
 
         File file = new File("img/original.png");
         BufferedImage img = ImageIO.read(file);
-        int[][] pixels = new int[Constant.WIDTH][Constant.HEIGHT];
+        double[][] pixels = new double[Constant.WIDTH][Constant.HEIGHT];
         double[][] gaussianNoise = new double[Constant.WIDTH][Constant.HEIGHT];
         double[][] periodicNoise = new double[Constant.WIDTH][Constant.HEIGHT];
         Raster raster = img.getData();
@@ -31,55 +33,62 @@ public class Main {
                 // imageMulNoise[i][j] = pixels[i][j] * gaussianNoise[i][j];
                 // noiseMulNoise[i][j] = gaussianNoise[i][j] * gaussianNoise[i][j];
 
-                noiseMulNoise[i][j] = periodicNoise[i][j] * periodicNoise[i][j];
+                // noiseMulNoise[i][j] = periodicNoise[i][j] * periodicNoise[i][j];
 
                 // add noise
                 pixels[i][j] += (gaussianNoise[i][j] + periodicNoise[i][j]);
 
-                imageMulNoise[i][j] = pixels[i][j] * periodicNoise[i][j];
+                // imageMulNoise[i][j] = pixels[i][j] * periodicNoise[i][j];
+
                 if (pixels[i][j] > 255) {
                     pixels[i][j] = 255;
                 }
                 if (pixels[i][j] < 0) {
                     pixels[i][j] = 0;
                 }
+
+                imageMulNoise[i][j] = pixels[i][j] * periodicNoise[i][j];
 
                 // pixels[i][j] -= periodicNoise[i][j];
-                if (pixels[i][j] > 255) {
-                    pixels[i][j] = 255;
-                }
-                if (pixels[i][j] < 0) {
-                    pixels[i][j] = 0;
-                }
+                // if (pixels[i][j] > 255) {
+                //     pixels[i][j] = 255;
+                // }
+                // if (pixels[i][j] < 0) {
+                //     pixels[i][j] = 0;
+                // }
 
-                destImg.setRGB(i, j, new Color(pixels[i][j], pixels[i][j], pixels[i][j]).getRGB());
+                destImg.setRGB(i, j, new Color((int) pixels[i][j], (int) pixels[i][j], (int) pixels[i][j]).getRGB());
             }
         }
 
         ImageIO.write(destImg, "png", new File("img/processed1.png"));
 
+        noiseMulNoise = Matrix.DotProduct(periodicNoise, periodicNoise);
+        imageMulNoise = Matrix.DotProduct(pixels, periodicNoise);
+
+        int[][] newPixels = new int[pixels.length][pixels[0].length];
 
         for (int i = 0; i < Constant.WIDTH; i++) {
             for (int j = 0; j < Constant.HEIGHT; j++) {
-                // pixels[i][j] += periodicNoise[i][j];
-                pixels[i][j] = filter(i, j, pixels, periodicNoise, imageMulNoise, noiseMulNoise);
-                if (pixels[i][j] > 255) {
-                    pixels[i][j] = 255;
+                // newPixels[i][j] = (int) (pixels[i][j] - periodicNoise[i][j]);
+                newPixels[i][j] = filter(i, j, pixels, periodicNoise, imageMulNoise, noiseMulNoise);
+                if (newPixels[i][j] > 255) {
+                    newPixels[i][j] = 255;
                 }
-                if (pixels[i][j] < 0) {
-                    pixels[i][j] = 0;
+                if (newPixels[i][j] < 0) {
+                    newPixels[i][j] = 0;
                 }
 
-                destImg.setRGB(i, j, new Color(pixels[i][j], pixels[i][j], pixels[i][j]).getRGB());
+                destImg.setRGB(i, j, new Color(newPixels[i][j], newPixels[i][j], newPixels[i][j]).getRGB());
             }
         }
 
         ImageIO.write(destImg, "png", new File("img/processed2.png"));
     }
 
-    private static int filter(int i, int j, int[][] pixels, double[][] noise, double[][] imageMulNoise, double[][] noiseMulNoise) {
-        int filterSize = 21;
-        int imageMean = getIntLocalMean(i, j, pixels, filterSize);
+    private static int filter(int i, int j, double[][] pixels, double[][] noise, double[][] imageMulNoise, double[][] noiseMulNoise) {
+        int filterSize = 31;
+        double imageMean = getLocalMean(i, j, pixels, filterSize);
         double noiseMean = getLocalMean(i, j, noise, filterSize);
         double imageNoiseMean = getLocalMean(i, j, imageMulNoise, filterSize);
         double noiseNoiseMean = getLocalMean(i, j, noiseMulNoise, filterSize);
@@ -90,43 +99,15 @@ public class Main {
     }
 
     private static double getLocalMean(int i, int j, double[][] pixels, int filterSize) {
-        int halfSize = filterSize / 2;
-        if (halfSize < 2) {
-            return pixels[i][j];
-        }
-        int left = i - halfSize;
-        int right = i + halfSize;
-        int top = j - halfSize;
-        int bottom = j + halfSize;
         double sum = 0;
         int count = 0;
-        for (int a = left; a < right; a++) {
-            for (int b = top; b < bottom; b++) {
+        for (int a = i; a < i + filterSize; a++) {
+            for (int b = j; b < j + filterSize; b++) {
                 if (a > 0 && b > 0 && a < pixels.length && b < pixels[0].length) {
                     sum += pixels[a][b];
                     count++;
                 } else {
-                    count++;
-                }
-            }
-        }
-        return sum / count;
-    }
-
-
-    private static int getIntLocalMean(int i, int j, int[][] pixels, int filterSize) {
-        int halfSize = filterSize / 2;
-        int left = i - halfSize;
-        int right = i + halfSize;
-        int top = j - halfSize;
-        int bottom = j + halfSize;
-        int sum = 0;
-        int count = 0;
-        for (int a = left; a < right; a++) {
-            for (int b = top; b < bottom; b++) {
-                if (a > 0 && b > 0 && a < pixels.length && b < pixels[0].length) {
-                    sum += pixels[a][b];
-                    count++;
+                    // count++;
                 }
             }
         }
