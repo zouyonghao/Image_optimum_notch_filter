@@ -66,9 +66,11 @@ public class OptimumNotchFilter2 {
                         - getLocalMean(image, i, j, filterSize) * getLocalMean(noiseMap, i, j, filterSize))
                         / (getLocalMean(noiseMulNoise, i, j, filterSize)
                         - getLocalMean(noiseMap, i, j, filterSize) * getLocalMean(noiseMap, i, j, filterSize));
-
-                finalImage.setGray(i, j, (int) (image.getGray(i, j) - noiseMap.getGray(i, j)));
-                int tmp = Math.min(255,  (int) (image.getGray(i, j) - w * noiseMap.getGray(i, j)));
+                int tmp = (image.getGray(i, j) - noiseMap.getGray(i, j));
+                tmp = Math.min(255, tmp);
+                tmp = Math.max(0, tmp);
+                finalImage.setGray(i, j, tmp);
+                tmp = Math.min(255,  (int) (image.getGray(i, j) - w * noiseMap.getGray(i, j)));
                 tmp = Math.max(0, tmp);
                 finalImageWithW.setGray(i, j, tmp);
             }
@@ -93,23 +95,15 @@ public class OptimumNotchFilter2 {
     }
 
     private static double getLocalMean(FastBitmap image, int i, int j, int filterSize) {
-        int halfSize = filterSize / 2;
-        if (halfSize < 2) {
-            return image.getGray(i, j);
-        }
-        int left = i - halfSize;
-        int right = i + halfSize;
-        int top = j - halfSize;
-        int bottom = j + halfSize;
         double sum = 0;
         int count = 0;
-        for (int a = left; a < right; a++) {
-            for (int b = top; b < bottom; b++) {
+        for (int a = i; a < i + filterSize; a++) {
+            for (int b = j; b < j + filterSize; b++) {
                 if (a > 0 && b > 0 && a < image.getWidth() && b < image.getHeight()) {
                     sum += image.getGray(a, b);
                     count++;
                 } else {
-                    count++;
+                    // count++;
                 }
             }
         }

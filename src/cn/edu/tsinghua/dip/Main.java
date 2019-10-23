@@ -47,7 +47,7 @@ public class Main {
                     pixels[i][j] = 0;
                 }
 
-                imageMulNoise[i][j] = pixels[i][j] * periodicNoise[i][j];
+                // imageMulNoise[i][j] = pixels[i][j] * periodicNoise[i][j];
 
                 // pixels[i][j] -= periodicNoise[i][j];
                 // if (pixels[i][j] > 255) {
