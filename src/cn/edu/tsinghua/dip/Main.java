@@ -21,24 +21,15 @@ public class Main {
         Raster raster = img.getData();
 
         BufferedImage destImg = new BufferedImage(Constant.WIDTH, Constant.HEIGHT, BufferedImage.TYPE_INT_RGB);
-        double[][] imageMulNoise = new double[Constant.WIDTH][Constant.HEIGHT];
-        double[][] noiseMulNoise = new double[Constant.WIDTH][Constant.HEIGHT];
 
         for (int i = 0; i < Constant.WIDTH; i++) {
             for (int j = 0; j < Constant.HEIGHT; j++) {
                 pixels[i][j] = raster.getSample(i, j, 0);
                 gaussianNoise[i][j] = GaussianNoise.getPixel();
                 periodicNoise[i][j] = PeriodicNoise.getPixel(i, j);
-                //
-                // imageMulNoise[i][j] = pixels[i][j] * gaussianNoise[i][j];
-                // noiseMulNoise[i][j] = gaussianNoise[i][j] * gaussianNoise[i][j];
-
-                // noiseMulNoise[i][j] = periodicNoise[i][j] * periodicNoise[i][j];
 
                 // add noise
                 pixels[i][j] += (gaussianNoise[i][j] + periodicNoise[i][j]);
-
-                // imageMulNoise[i][j] = pixels[i][j] * periodicNoise[i][j];
 
                 if (pixels[i][j] > 255) {
                     pixels[i][j] = 255;
@@ -47,30 +38,24 @@ public class Main {
                     pixels[i][j] = 0;
                 }
 
-                // imageMulNoise[i][j] = pixels[i][j] * periodicNoise[i][j];
-
-                // pixels[i][j] -= periodicNoise[i][j];
-                // if (pixels[i][j] > 255) {
-                //     pixels[i][j] = 255;
-                // }
-                // if (pixels[i][j] < 0) {
-                //     pixels[i][j] = 0;
-                // }
-
                 destImg.setRGB(i, j, new Color((int) pixels[i][j], (int) pixels[i][j], (int) pixels[i][j]).getRGB());
             }
         }
 
         ImageIO.write(destImg, "png", new File("img/processed1.png"));
 
-        noiseMulNoise = Matrix.DotProduct(periodicNoise, periodicNoise);
-        imageMulNoise = Matrix.DotProduct(pixels, periodicNoise);
+        double[][] noiseMulNoise = Matrix.DotProduct(periodicNoise, periodicNoise);
+        double[][] imageMulNoise = Matrix.DotProduct(pixels, periodicNoise);
 
         int[][] newPixels = new int[pixels.length][pixels[0].length];
 
         for (int i = 0; i < Constant.WIDTH; i++) {
             for (int j = 0; j < Constant.HEIGHT; j++) {
+
+                // 此行相当于不乘 w
                 // newPixels[i][j] = (int) (pixels[i][j] - periodicNoise[i][j]);
+
+                // f = g - w * eta
                 newPixels[i][j] = filter(i, j, pixels, periodicNoise, imageMulNoise, noiseMulNoise);
                 if (newPixels[i][j] > 255) {
                     newPixels[i][j] = 255;
